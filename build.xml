@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<project basedir="." default="jar" name="HackedUpReaderBooklet">
+
+    <property name="main-class"  value="com.github.bhaak.HackedUpReaderBooklet"/>
+
+    <property environment="env"/>
+
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.4"/>
+    <property name="source" value="1.4"/>
+
+    <!-- environment variable for the location of Amazon's jar files -->
+    <target name="checkProperties">
+      <fail unless="env.KINDLE_DUMP">"KINDLE_DUMP must be set</fail>
+      <echo message="KINDLE_DUMP is set to = ${env.KINDLE_DUMP}"/>
+    </target>
+
+    <path id="local.classpath">
+        <pathelement location="${env.KINDLE_DUMP}/opt/amazon/ebook/lib/kaf.jar"/>
+        <pathelement location="${env.KINDLE_DUMP}/opt/amazon/ebook/lib/KindletImplementation-2.0.jar"/>
+        <pathelement location="${env.KINDLE_DUMP}/opt/amazon/ebook/lib/utilities.jar"/>
+    </path>
+
+    <target name="compile" depends="checkProperties">
+        <mkdir dir="build/classes"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="build/classes" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="local.classpath"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="build/jar"/>
+        <jar destfile="build/jar/${ant.project.name}.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="clean-build" depends="clean,jar"/>
+
+</project>
