@@ -1,5 +1,6 @@
 package com.github.bhaak;
 
+import java.io.IOException;
 import java.net.URI;
 
 import com.amazon.kindle.booklet.AbstractBooklet;
@@ -8,15 +9,26 @@ import com.amazon.kindle.booklet.ChromeException;
 import com.amazon.kindle.booklet.ChromeHeaderRequest;
 import com.amazon.ebook.util.log.Log;
 
+/**
+ * A Booklet for starting HackedUpReader.
+ *  
+ * @author Patric Mueller &lt;bhaak@gmx.net&gt;
+ */
 public class HackedUpReaderBooklet extends AbstractBooklet {
 
 	private static final Log logger = Log.getInstance("HackedUpReaderBooklet");
+	private static final String hackedupreader = "/mnt/us/hackedupreader/bin/cr3";
 	
 	public HackedUpReaderBooklet() {
 		logger.info("HackedUpReaderBooklet");
 	}
 	public void start(URI contentURI) {
 		logger.info("start("+contentURI+")");
+		try {
+			Runtime.getRuntime().exec(hackedupreader);
+		} catch (IOException e) {
+			logger.error(e.toString(), e);
+		}
 		super.start(contentURI);
 	}
 
