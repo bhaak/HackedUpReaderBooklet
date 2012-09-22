@@ -10,3 +10,6 @@ fletched and thoroughly debugged product for end users.
 The discussion about this booklet and more information is available
 at this forum:
 http://www.mobileread.com/forums/showthread.php?t=185610
+
+HackedUpReaderBooklet is licensed under the MIT license. See the file
+LICENSE for more details.
