@@ -2,7 +2,7 @@
 
 <project basedir="." default="jar" name="HackedUpReaderBooklet">
 
-    <property name="main-class"  value="com.github.bhaak.HackedUpReaderBooklet"/>
+    <property name="main-class"  value="com.github.bhaak.HackedUpReaderKindlet"/>
 
     <property environment="env"/>
 
@@ -16,10 +16,22 @@
       <echo message="KINDLE_DUMP is set to = ${env.KINDLE_DUMP}"/>
     </target>
 
+    <target name="checkDeveloperKeystore">
+      <!-- http://www.mobileread.com/forums/showthread.php?t=152294 -->
+      <fail unless="env.KINDLE_DEVELOPER_KEYSTORE">"KINDLE_DEVELOPER_KEYSTORE must be set</fail>
+      <echo message="KINDLE_DEVELOPER_KEYSTORE is set to = ${env.KINDLE_DEVELOPER_KEYSTORE}"/>
+    </target>
+
     <path id="local.classpath">
         <pathelement location="${env.KINDLE_DUMP}/opt/amazon/ebook/lib/kaf.jar"/>
-        <pathelement location="${env.KINDLE_DUMP}/opt/amazon/ebook/lib/KindletImplementation-2.0.jar"/>
+        <pathelement location="${env.KINDLE_DUMP}/opt/amazon/ebook/lib/KindletImplementation-2.1.jar"/>
         <pathelement location="${env.KINDLE_DUMP}/opt/amazon/ebook/lib/utilities.jar"/>
+        <!-- for AbstractKindlet -->
+        <pathelement location="${env.KINDLE_DUMP}/opt/amazon/ebook/lib/Kindlet-2.1.jar"/>
+        <pathelement location="${env.KINDLE_DUMP}/opt/amazon/ebook/lib/ReaderSDK.jar"/>
+        <pathelement location="${env.KINDLE_DUMP}/opt/amazon/ebook/sdk/lib/log4j-1.2.16.jar"/>
+        <pathelement location="../HackedUpReaderExtension/hackedupreader/HackedUpReaderExtension.jar"/>
+        <pathelement location="KindleLauncher.jar"/>
     </path>
 
     <target name="compile" depends="checkProperties">
@@ -32,11 +44,31 @@
 
     <target name="jar" depends="compile">
         <mkdir dir="build/jar"/>
+        <copy file="src/com/github/bhaak/log4j.properties" todir="build/classes/com/github/bhaak/"/>
         <jar destfile="build/jar/${ant.project.name}.jar" basedir="build/classes">
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
+                <attribute name="Implementation-Vendor" value="Patric Mueller"/>
+                <attribute name="Implementation-Title" value="HackedUpReader"/>
+                <attribute name="Implementation-Version" value="3.0"/>
+                <attribute name="Extension-List" value="SDK"/>
+                <attribute name="SDK-Specification-Version" value="2.1"/>
+                <attribute name="SDK-Extension-Name" value="com.amazon.kindle.kindlet"/>
+                <attribute name="Toolbar-Mode" value="persistent"/>
+                <attribute name="Font-Size-Mode" value="point"/>
             </manifest>
         </jar>
+    </target>
+
+    <target name="signjar" depends="jar,checkDeveloperKeystore">
+<!--
+jarsigner -keystore KEYSTORE_FILE -storepass password JAR_FILE dktest
+jarsigner -keystore KEYSTORE_FILE -storepass password JAR_FILE ditest
+jarsigner -keystore KEYSTORE_FILE -storepass password JAR_FILE dntest
+-->
+        <signjar jar="build/jar/${ant.project.name}.jar" alias="dktest" keystore="${env.KINDLE_DEVELOPER_KEYSTORE}" storepass="password" />
+        <signjar jar="build/jar/${ant.project.name}.jar" alias="ditest" keystore="${env.KINDLE_DEVELOPER_KEYSTORE}" storepass="password" />
+        <signjar jar="build/jar/${ant.project.name}.jar" alias="dntest" keystore="${env.KINDLE_DEVELOPER_KEYSTORE}" storepass="password" />
     </target>
 
     <target name="clean">
