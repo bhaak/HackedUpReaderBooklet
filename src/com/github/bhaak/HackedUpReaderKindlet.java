@@ -3,6 +3,10 @@ package com.github.bhaak;
 import com.amazon.kindle.kindlet.AbstractKindlet;
 import com.amazon.kindle.kindlet.KindletContext;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import javax.swing.JButton;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Properties;
@@ -18,7 +22,10 @@ public class HackedUpReaderKindlet extends AbstractKindlet {
 	private Process hackedupreaderProcess;
 	private HackedUpReaderWaitThread thread = null;
 
+	JButton status = new JButton("!");
+
 	public void create(KindletContext context) {
+		
 		Properties p = new Properties();
 		try {
 			p.load(this.getClass().getResource("log4j.properties").openStream());
@@ -28,26 +35,38 @@ public class HackedUpReaderKindlet extends AbstractKindlet {
 		PropertyConfigurator.configure(p);
 		
 		logger.info("create()");
-	}
 
-	public void start() {
+		// set up button
+		Container root = context.getRootContainer();
+		root.setLayout(new BorderLayout());
+		root.add(status, BorderLayout.CENTER);
+		status.setText("loading HackedUpReader ...");
+
 		try {
 			logger.info("Starting HackedUpReader");
-			
 			// Start HackedUpReader
 			hackedupreaderProcess = Runtime.getRuntime().exec(hackedupreader);
 			logger.info("Started HackedUpReader "+hackedupreaderProcess);
-			
 			thread = new HackedUpReaderWaitThread();
 			thread.start();
 		} catch (Throwable t) {
+			status.setText("Error while loading HackedUpReader");
 			logger.error(t.getMessage(), t);
 		}
 	}
 
+	public void start() {
+		logger.info("start()");
+		super.start();
+	}
 
 	public void stop() {
 		logger.info("stop()");
+		super.stop();
+	}
+
+	public void destroy() {
+		logger.info("destroy()");
 		// Stop HackedUpReader
 		if (hackedupreaderProcess != null) {
 			try {
@@ -57,11 +76,6 @@ public class HackedUpReaderKindlet extends AbstractKindlet {
 				logger.error(e.toString(), e);
 			}
 		}
-		super.stop();
-	}
-	
-	public void destroy() {
-		logger.info("destroy()");
 		super.destroy();
 	}
 
