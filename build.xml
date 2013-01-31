@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
-<project basedir="." default="jar" name="HackedUpReaderBooklet">
-
-    <property name="main-class"  value="com.github.bhaak.HackedUpReaderKindlet"/>
+<project basedir="." default="jar" name="HackedUpReader">
 
     <property environment="env"/>
 
@@ -45,17 +43,23 @@
     <target name="jar" depends="compile">
         <mkdir dir="build/jar"/>
         <copy file="src/com/github/bhaak/log4j.properties" todir="build/classes/com/github/bhaak/"/>
-        <jar destfile="build/jar/${ant.project.name}.jar" basedir="build/classes">
+        <jar destfile="build/jar/${ant.project.name}Kindlet.jar" basedir="build/classes">
             <manifest>
-                <attribute name="Main-Class" value="${main-class}"/>
+                <attribute name="Main-Class" value="com.github.bhaak.HackedUpReaderKindlet"/>
                 <attribute name="Implementation-Vendor" value="Patric Mueller"/>
                 <attribute name="Implementation-Title" value="HackedUpReader"/>
-                <attribute name="Implementation-Version" value="3.0"/>
+                <attribute name="Implementation-Version" value="0.4.0"/>
                 <attribute name="Extension-List" value="SDK"/>
                 <attribute name="SDK-Specification-Version" value="2.1"/>
                 <attribute name="SDK-Extension-Name" value="com.amazon.kindle.kindlet"/>
                 <attribute name="Toolbar-Mode" value="persistent"/>
                 <attribute name="Font-Size-Mode" value="point"/>
+            </manifest>
+        </jar>
+
+        <jar destfile="build/jar/${ant.project.name}Booklet.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="com.github.bhaak.HackedUpReaderBooklet"/>
             </manifest>
         </jar>
     </target>
@@ -66,9 +70,9 @@ jarsigner -keystore KEYSTORE_FILE -storepass password JAR_FILE dktest
 jarsigner -keystore KEYSTORE_FILE -storepass password JAR_FILE ditest
 jarsigner -keystore KEYSTORE_FILE -storepass password JAR_FILE dntest
 -->
-        <signjar jar="build/jar/${ant.project.name}.jar" alias="dktest" keystore="${env.KINDLE_DEVELOPER_KEYSTORE}" storepass="password" />
-        <signjar jar="build/jar/${ant.project.name}.jar" alias="ditest" keystore="${env.KINDLE_DEVELOPER_KEYSTORE}" storepass="password" />
-        <signjar jar="build/jar/${ant.project.name}.jar" alias="dntest" keystore="${env.KINDLE_DEVELOPER_KEYSTORE}" storepass="password" />
+        <signjar jar="build/jar/${ant.project.name}Kindlet.jar" alias="dktest" keystore="${env.KINDLE_DEVELOPER_KEYSTORE}" storepass="password" />
+        <signjar jar="build/jar/${ant.project.name}Kindlet.jar" alias="ditest" keystore="${env.KINDLE_DEVELOPER_KEYSTORE}" storepass="password" />
+        <signjar jar="build/jar/${ant.project.name}Kindlet.jar" alias="dntest" keystore="${env.KINDLE_DEVELOPER_KEYSTORE}" storepass="password" />
     </target>
 
     <target name="clean">
