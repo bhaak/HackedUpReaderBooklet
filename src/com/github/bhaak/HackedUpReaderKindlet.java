@@ -5,9 +5,15 @@ import com.amazon.kindle.kindlet.KindletContext;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Font;
+
 import javax.swing.JButton;
+import javax.swing.JTextArea;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import java.lang.reflect.Field;
 import java.util.Properties;
 
@@ -23,6 +29,7 @@ public class HackedUpReaderKindlet extends AbstractKindlet {
 	private HackedUpReaderWaitThread thread = null;
 
 	JButton status = new JButton("!");
+	JTextArea stacktrace = new JTextArea();
 
 	public void create(KindletContext context) {
 		
@@ -50,7 +57,26 @@ public class HackedUpReaderKindlet extends AbstractKindlet {
 			thread = new HackedUpReaderWaitThread();
 			thread.start();
 		} catch (Throwable t) {
+			// remove all UI components of root window
+			root.removeAll();
+
+			// put generic error message at top
 			status.setText("Error while loading HackedUpReader");
+			root.add(status, BorderLayout.PAGE_START);
+
+			// transform stacktrace into string
+			StringWriter writer = new StringWriter();
+			t.printStackTrace(new PrintWriter(writer));
+			writer.flush();
+			String stacktraceString = writer.toString();
+
+			// show stacktrace in the middle of the screen
+			JTextArea stacktrace = new JTextArea(stacktraceString);
+			logger.info(stacktrace.getFont());
+			logger.info(stacktrace.getFont().getName());
+			logger.info(""+stacktrace.getFont().getSize());
+			stacktrace.setFont(new Font(stacktrace.getFont().getName(), Font.PLAIN, 6));
+			root.add(stacktrace, BorderLayout.CENTER);
 			logger.error(t.getMessage(), t);
 		}
 	}
