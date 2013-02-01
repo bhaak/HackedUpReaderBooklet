@@ -43,7 +43,7 @@
     <target name="jar" depends="compile">
         <mkdir dir="build/jar"/>
         <copy file="src/com/github/bhaak/log4j.properties" todir="build/classes/com/github/bhaak/"/>
-        <jar destfile="build/jar/${ant.project.name}Kindlet.jar" basedir="build/classes">
+        <jar destfile="build/jar/${ant.project.name}Kindlet.azw2" basedir="build/classes">
             <manifest>
                 <attribute name="Main-Class" value="com.github.bhaak.HackedUpReaderKindlet"/>
                 <attribute name="Implementation-Vendor" value="Patric Mueller"/>
@@ -70,9 +70,9 @@ jarsigner -keystore KEYSTORE_FILE -storepass password JAR_FILE dktest
 jarsigner -keystore KEYSTORE_FILE -storepass password JAR_FILE ditest
 jarsigner -keystore KEYSTORE_FILE -storepass password JAR_FILE dntest
 -->
-        <signjar jar="build/jar/${ant.project.name}Kindlet.jar" alias="dktest" keystore="${env.KINDLE_DEVELOPER_KEYSTORE}" storepass="password" />
-        <signjar jar="build/jar/${ant.project.name}Kindlet.jar" alias="ditest" keystore="${env.KINDLE_DEVELOPER_KEYSTORE}" storepass="password" />
-        <signjar jar="build/jar/${ant.project.name}Kindlet.jar" alias="dntest" keystore="${env.KINDLE_DEVELOPER_KEYSTORE}" storepass="password" />
+        <signjar jar="build/jar/${ant.project.name}Kindlet.azw2" alias="dktest" keystore="${env.KINDLE_DEVELOPER_KEYSTORE}" storepass="password" />
+        <signjar jar="build/jar/${ant.project.name}Kindlet.azw2" alias="ditest" keystore="${env.KINDLE_DEVELOPER_KEYSTORE}" storepass="password" />
+        <signjar jar="build/jar/${ant.project.name}Kindlet.azw2" alias="dntest" keystore="${env.KINDLE_DEVELOPER_KEYSTORE}" storepass="password" />
     </target>
 
     <target name="clean">
